@@ -1,0 +1,190 @@
+/*
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS and SCSS file within this directory, lib/assets/stylesheets, or any plugin's
+ * vendor/assets/stylesheets directory can be referenced here using a relative path.
+ *
+ * You're free to add application-wide styles to this file and they'll appear at the bottom of the
+ * compiled file so the styles you add here take precedence over styles defined in any other CSS/SCSS
+ * files in this directory. Styles in this file should be added after the last require_* statement.
+ * It is generally better to create a new file per style scope.
+ *
+ *= require_tree .
+ *= require_self
+ */
+
+/* Custom styles for authentication forms */
+.auth-form-card {
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease-in-out;
+}
+
+.auth-form-card:hover {
+  transform: translateY(-2px);
+}
+
+.auth-form-card .card-header {
+  border-radius: 15px 15px 0 0 !important;
+  border-bottom: none;
+}
+
+.auth-form-card .card-body {
+  border-radius: 0 0 15px 15px;
+}
+
+.form-control-lg {
+  border-radius: 10px;
+  border: 2px solid #e9ecef;
+  transition: all 0.2s ease-in-out;
+}
+
+.form-control-lg:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+.form-select-lg {
+  border-radius: 10px;
+  border: 2px solid #e9ecef;
+  transition: all 0.2s ease-in-out;
+}
+
+.form-select-lg:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+.btn-lg {
+  border-radius: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-lg:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.form-check-input:checked {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+}
+
+.form-check-input:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+.alert {
+  border-radius: 10px;
+  border: none;
+}
+
+.alert-danger {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.alert-success {
+  background-color: #d1edff;
+  color: #0c5460;
+}
+
+/* Profile page styles */
+.profile-avatar {
+  display: inline-block;
+  padding: 1rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 50%;
+  color: white;
+  transition: transform 0.3s ease;
+}
+
+.profile-avatar:hover {
+  transform: scale(1.05);
+}
+
+.form-control-plaintext {
+  padding: 0.5rem 0;
+  border: none;
+  background: transparent;
+  color: #212529;
+}
+
+.form-control-plaintext.fw-bold {
+  font-weight: 600 !important;
+}
+
+.badge {
+  font-size: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 20px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .auth-form-card {
+    margin-top: 2rem !important;
+  }
+  
+  .card-body {
+    padding: 1.5rem !important;
+  }
+  
+  .profile-avatar {
+    font-size: 4rem !important;
+  }
+}
+
+/* Animation for form elements */
+.form-control, .form-select, .btn {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Custom focus styles */
+.form-label {
+  font-weight: 600;
+  color: #495057;
+  margin-bottom: 0.5rem;
+}
+
+.form-text {
+  font-size: 0.875rem;
+  color: #6c757d;
+}
+
+.invalid-feedback {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+/* Link styling */
+.text-decoration-none {
+  color: #0d6efd;
+  transition: color 0.2s ease-in-out;
+}
+
+.text-decoration-none:hover {
+  color: #0a58ca;
+}
+
+/* Card header icons */
+.card-header i {
+  font-size: 1.5rem;
+  margin-right: 0.5rem;
+}

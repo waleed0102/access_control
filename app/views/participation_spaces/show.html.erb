@@ -1,0 +1,230 @@
+<div class="row">
+  <div class="col-lg-8">
+    <!-- Main Space Information -->
+    <div class="card shadow-lg border-0 mb-4">
+      <div class="card-header bg-primary text-white py-3">
+        <div class="d-flex justify-content-between align-items-center">
+          <h3 class="mb-0">
+            <i class="fas fa-users"></i> <%= @participation_space.name %>
+          </h3>
+          <span class="badge bg-light text-dark">
+            <%= @participation_space.is_active? ? 'Active' : 'Inactive' %>
+          </span>
+        </div>
+      </div>
+      
+      <div class="card-body p-4">
+        <div class="row mb-4">
+          <div class="col-md-8">
+            <h5 class="text-muted mb-3">Description</h5>
+            <p class="lead"><%= @participation_space.description.present? ? @participation_space.description : 'No description provided.' %></p>
+          </div>
+          
+          <div class="col-md-4">
+            <div class="text-center">
+              <div class="bg-light rounded p-3 mb-3">
+                <h6 class="text-muted mb-2">Age Group</h6>
+                <h4 class="text-primary mb-0"><%= @participation_space.age_group.name %></h4>
+                <small class="text-muted"><%= @participation_space.age_group.age_range %></small>
+              </div>
+              
+              <div class="bg-light rounded p-3">
+                <h6 class="text-muted mb-2">Organization</h6>
+                <h5 class="text-success mb-0"><%= @participation_space.organization.name %></h5>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Access Information -->
+        <div class="row">
+          <div class="col-md-6">
+            <h5 class="text-muted mb-3">
+              <i class="fas fa-shield-alt"></i> Access Rules
+            </h5>
+            <div class="list-group list-group-flush">
+              <div class="list-group-item d-flex justify-content-between align-items-center">
+                <span>Required Roles</span>
+                <div>
+                  <% @participation_space.required_roles.each do |role| %>
+                    <span class="badge bg-primary me-1"><%= role.titleize %></span>
+                  <% end %>
+                </div>
+              </div>
+              
+              <div class="list-group-item d-flex justify-content-between align-items-center">
+                <span>Max Participants</span>
+                <span class="badge bg-info">
+                  <%= @participation_space.max_participants || 'Unlimited' %>
+                </span>
+              </div>
+              
+              <div class="list-group-item d-flex justify-content-between align-items-center">
+                <span>Content Filter Level</span>
+                <span class="badge bg-warning text-dark">
+                  <%= @participation_space.content_filter_level %>
+                </span>
+              </div>
+              
+              <div class="list-group-item d-flex justify-content-between align-items-center">
+                <span>Time Restrictions</span>
+                <span class="text-muted">
+                  <% if @participation_space.time_restrictions.present? %>
+                    <%= @participation_space.time_restrictions['start_hour'] || 0 %>:00 - 
+                    <%= @participation_space.time_restrictions['end_hour'] || 23 %>:00
+                  <% else %>
+                    None
+                  <% end %>
+                </span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="col-md-6">
+            <h5 class="text-muted mb-3">
+              <i class="fas fa-gamepad"></i> Activities
+            </h5>
+            <div class="row">
+              <div class="col-6">
+                <h6 class="text-success">Allowed Activities</h6>
+                <% if @can_perform_activities.any? %>
+                  <ul class="list-unstyled">
+                    <% @can_perform_activities.each do |activity| %>
+                      <li><i class="fas fa-check text-success me-2"></i><%= activity.titleize %></li>
+                    <% end %>
+                  </ul>
+                <% else %>
+                  <p class="text-muted">All activities allowed</p>
+                <% end %>
+              </div>
+              
+              <div class="col-6">
+                <h6 class="text-danger">Restricted Activities</h6>
+                <% if @restricted_activities.any? %>
+                  <ul class="list-unstyled">
+                    <% @restricted_activities.each do |activity| %>
+                      <li><i class="fas fa-times text-danger me-2"></i><%= activity.titleize %></li>
+                    <% end %>
+                  </ul>
+                <% else %>
+                  <p class="text-muted">No restrictions</p>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Participants -->
+    <div class="card shadow-lg border-0 mb-4">
+      <div class="card-header bg-success text-white py-3">
+        <h4 class="mb-0">
+          <i class="fas fa-user-friends"></i> Participants (<%= @participants.count %>)
+        </h4>
+      </div>
+      
+      <div class="card-body p-4">
+        <% if @participants.any? %>
+          <div class="row">
+            <% @participants.each do |participant| %>
+              <div class="col-md-6 col-lg-4 mb-3">
+                <div class="card border-0 bg-light">
+                  <div class="card-body text-center p-3">
+                    <div class="mb-2">
+                      <i class="fas fa-user-circle fa-2x text-primary"></i>
+                    </div>
+                    <h6 class="mb-1"><%= participant.full_name %></h6>
+                    <small class="text-muted"><%= participant.email %></small>
+                    <div class="mt-2">
+                      <% participant.roles.each do |role| %>
+                        <span class="badge bg-secondary me-1"><%= role.name.titleize %></span>
+                      <% end %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <div class="text-center py-4">
+            <i class="fas fa-users fa-3x text-muted mb-3"></i>
+            <h5 class="text-muted">No participants yet</h5>
+            <p class="text-muted">Users who meet the access requirements will appear here.</p>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sidebar -->
+  <div class="col-lg-4">
+    <!-- Analytics -->
+    <div class="card shadow-lg border-0 mb-4">
+      <div class="card-header bg-info text-white py-3">
+        <h4 class="mb-0">
+          <i class="fas fa-chart-bar"></i> Analytics
+        </h4>
+      </div>
+      
+      <div class="card-body p-4">
+        <div class="row text-center">
+          <div class="col-6 mb-3">
+            <div class="bg-light rounded p-3">
+              <h3 class="text-primary mb-1"><%= @analytics_data[:total_accessible_users] %></h3>
+              <small class="text-muted">Total Users</small>
+            </div>
+          </div>
+          
+          <div class="col-6 mb-3">
+            <div class="bg-light rounded p-3">
+              <h3 class="text-success mb-1"><%= @analytics_data[:accessible_users] %></h3>
+              <small class="text-muted">Can Access</small>
+            </div>
+          </div>
+        </div>
+        
+        <hr>
+        
+        <h6 class="text-muted mb-3">Access Statistics</h6>
+        <div class="progress mb-3" style="height: 25px;">
+          <% percentage = @analytics_data[:total_accessible_users] > 0 ? (@analytics_data[:accessible_users].to_f / @analytics_data[:total_accessible_users] * 100).round : 0 %>
+          <div class="progress-bar bg-success" role="progressbar" style="width: <%= percentage %>%">
+            <%= percentage %>%
+          </div>
+        </div>
+        <small class="text-muted"><%= @analytics_data[:accessible_users] %> of <%= @analytics_data[:total_accessible_users] %> users can access this space</small>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="card shadow-lg border-0">
+      <div class="card-header bg-warning text-dark py-3">
+        <h4 class="mb-0">
+          <i class="fas fa-cogs"></i> Quick Actions
+        </h4>
+      </div>
+      
+      <div class="card-body p-4">
+        <div class="d-grid gap-2">
+          <% if current_user.organization_admin? || current_user.organization_moderator? %>
+            <%= link_to edit_participation_space_path(@participation_space), class: 'btn btn-outline-primary' do %>
+              <i class="fas fa-edit"></i> Edit Space
+            <% end %>
+            
+            <%= link_to participation_space_path(@participation_space), 
+                method: :delete, 
+                data: { confirm: 'Are you sure you want to delete this participation space?' },
+                class: 'btn btn-outline-danger' do %>
+              <i class="fas fa-trash"></i> Delete Space
+            <% end %>
+          <% end %>
+          
+          <%= link_to organization_participation_spaces_path(@participation_space.organization), class: 'btn btn-outline-secondary' do %>
+            <i class="fas fa-arrow-left"></i> Back to Spaces
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

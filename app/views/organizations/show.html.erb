@@ -1,0 +1,158 @@
+<div class="row">
+  <div class="col-12">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h1>
+        <i class="fas fa-building"></i> <%= @organization.name %>
+      </h1>
+      <div>
+        <% if current_user.organization_admin? %>
+          <%= link_to edit_organization_path(@organization), class: 'btn btn-outline-primary' do %>
+            <i class="fas fa-edit"></i> Edit
+          <% end %>
+          <%= link_to analytics_organization_path(@organization), class: 'btn btn-info' do %>
+            <i class="fas fa-chart-bar"></i> Analytics
+          <% end %>
+        <% end %>
+        <%= link_to organizations_path, class: 'btn btn-secondary' do %>
+          <i class="fas fa-arrow-left"></i> Back
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Organization Details -->
+<div class="row">
+  <div class="col-md-8">
+    <div class="card mb-4">
+      <div class="card-header">
+        <h5 class="card-title mb-0">
+          <i class="fas fa-info-circle"></i> Organization Details
+        </h5>
+      </div>
+      <div class="card-body">
+        <p><strong>Description:</strong> <%= @organization.description %></p>
+        <p><strong>Domain:</strong> <%= @organization.domain %></p>
+        <p><strong>Total Members:</strong> <%= @organization.member_count %></p>
+        <p><strong>Active Members:</strong> <%= @organization.active_member_count %></p>
+        <p><strong>Activity Rate:</strong> <%= (@organization.active_member_count.to_f / @organization.member_count * 100).round(1) %>%</p>
+      </div>
+    </div>
+  </div>
+  
+  <div class="col-md-4">
+    <div class="card mb-4">
+      <div class="card-header">
+        <h5 class="card-title mb-0">
+          <i class="fas fa-cog"></i> Settings
+        </h5>
+      </div>
+      <div class="card-body">
+        <p><strong>Minimum Age:</strong> <%= @organization.minimum_age %></p>
+        <p><strong>Maximum Age:</strong> <%= @organization.maximum_age %></p>
+        <p><strong>Parental Consent:</strong> <%= @organization.requires_parental_consent? ? 'Required' : 'Not Required' %></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Participation Spaces -->
+<div class="row">
+  <div class="col-12">
+    <div class="card mb-4">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0">
+          <i class="fas fa-users"></i> Participation Spaces
+        </h5>
+        <% if current_user.organization_moderator? %>
+          <%= link_to new_organization_participation_space_path(@organization), class: 'btn btn-primary btn-sm' do %>
+            <i class="fas fa-plus"></i> New Space
+          <% end %>
+        <% end %>
+      </div>
+      <div class="card-body">
+        <% if @participation_spaces.any? %>
+          <div class="row">
+            <% @participation_spaces.each do |space| %>
+              <div class="col-md-6 col-lg-4 mb-3">
+                <div class="card h-100 <%= current_user.can_access_space?(space) ? 'border-success' : 'border-secondary' %>">
+                  <div class="card-body">
+                    <h6 class="card-title">
+                      <%= space.name %>
+                      <% if current_user.can_access_space?(space) %>
+                        <span class="badge bg-success">Accessible</span>
+                      <% else %>
+                        <span class="badge bg-secondary">Restricted</span>
+                      <% end %>
+                    </h6>
+                    <p class="card-text"><%= space.description %></p>
+                    <p class="card-text">
+                      <small class="text-muted">
+                        Age Group: <%= space.age_group.name %><br>
+                        Status: <%= space.is_active? ? 'Active' : 'Inactive' %>
+                      </small>
+                    </p>
+                    <%= link_to 'View Details', participation_space_path(space), class: 'btn btn-outline-primary btn-sm' %>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <p class="text-muted">No participation spaces available.</p>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Members -->
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">
+        <h5 class="card-title mb-0">
+          <i class="fas fa-user-friends"></i> Members
+        </h5>
+      </div>
+      <div class="card-body">
+        <% if @members.any? %>
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Age</th>
+                  <th>Age Group</th>
+                  <th>Roles</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @members.each do |member| %>
+                  <tr>
+                    <td><%= member.full_name %></td>
+                    <td><%= member.email %></td>
+                    <td><%= member.age %> years</td>
+                    <td><%= member.age_group&.name || 'Not assigned' %></td>
+                    <td>
+                      <% member.roles.where(resource: @organization).each do |role| %>
+                        <span class="badge bg-primary"><%= role.name.titleize %></span>
+                      <% end %>
+                    </td>
+                    <td>
+                      <span class="badge bg-success">Active</span>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        <% else %>
+          <p class="text-muted">No members found.</p>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,137 @@
+<div class="row">
+  <div class="col-12">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h1>
+        <i class="fas fa-user-shield"></i> Parental Consent
+      </h1>
+      <%= link_to edit_parental_consent_path, class: 'btn btn-primary' do %>
+        <i class="fas fa-edit"></i> Update Consent
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-8">
+    <div class="card">
+      <div class="card-header">
+        <h5 class="card-title mb-0">
+          <i class="fas fa-info-circle"></i> Consent Status
+        </h5>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-6">
+            <p><strong>Status:</strong> 
+              <% case @parental_consent.status %>
+              <% when 'approved' %>
+                <span class="badge bg-success">Approved</span>
+              <% when 'pending' %>
+                <span class="badge bg-warning">Pending</span>
+              <% else %>
+                <span class="badge bg-secondary">Not Submitted</span>
+              <% end %>
+            </p>
+            <p><strong>Parent Name:</strong> <%= @parental_consent.parent_name.present? ? @parental_consent.parent_name : 'Not provided' %></p>
+            <p><strong>Parent Email:</strong> <%= @parental_consent.parent_email.present? ? @parental_consent.parent_email : 'Not provided' %></p>
+          </div>
+          <div class="col-md-6">
+            <p><strong>Consent Given:</strong> <%= @parental_consent.consent_given? ? 'Yes' : 'No' %></p>
+            <p><strong>Terms Accepted:</strong> <%= @parental_consent.terms_accepted? ? 'Yes' : 'No' %></p>
+            <% if @parental_consent.consent_date %>
+              <p><strong>Consent Date:</strong> <%= @parental_consent.consent_date.strftime('%B %d, %Y at %I:%M %p') %></p>
+            <% end %>
+          </div>
+        </div>
+
+        <% if @parental_consent.consent_expired? %>
+          <div class="alert alert-warning mt-3">
+            <i class="fas fa-exclamation-triangle"></i>
+            <strong>Consent Expired:</strong> Your parental consent has expired and needs to be renewed.
+          </div>
+        <% end %>
+
+        <% if @parental_consent.needs_renewal? %>
+          <div class="alert alert-info mt-3">
+            <i class="fas fa-info-circle"></i>
+            <strong>Renewal Required:</strong> Your parental consent needs to be renewed to continue accessing all features.
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="card">
+      <div class="card-header">
+        <h5 class="card-title mb-0">
+          <i class="fas fa-user"></i> User Information
+        </h5>
+      </div>
+      <div class="card-body">
+        <p><strong>Name:</strong> <%= current_user.full_name %></p>
+        <p><strong>Age:</strong> <%= current_user.age %> years old</p>
+        <p><strong>Age Group:</strong> <%= current_user.age_group&.name || 'Not assigned' %></p>
+        <p><strong>Organization:</strong> <%= current_user.organization&.name || 'None' %></p>
+      </div>
+    </div>
+
+    <div class="card mt-3">
+      <div class="card-header">
+        <h5 class="card-title mb-0">
+          <i class="fas fa-shield-alt"></i> Access Restrictions
+        </h5>
+      </div>
+      <div class="card-body">
+        <% if current_user.requires_parental_consent? %>
+          <div class="alert alert-warning">
+            <i class="fas fa-lock"></i>
+            <strong>Access Restricted:</strong> You need parental consent to access all features.
+          </div>
+        <% else %>
+          <div class="alert alert-success">
+            <i class="fas fa-check-circle"></i>
+            <strong>Full Access:</strong> You have access to all features.
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<% if @parental_consent.consent_given? %>
+  <div class="row mt-4">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="card-title mb-0">
+            <i class="fas fa-check-circle"></i> What You Can Access
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6">
+              <h6>Allowed Activities:</h6>
+              <ul>
+                <% current_user.age_group&.allowed_activities&.each do |activity| %>
+                  <li><%= activity.titleize %></li>
+                <% end %>
+              </ul>
+            </div>
+            <div class="col-md-6">
+              <h6>Content Filter Level:</h6>
+              <p><span class="badge bg-secondary"><%= current_user.age_group&.content_filter_level&.titleize || 'Standard' %></span></p>
+              
+              <h6>Time Restrictions:</h6>
+              <% if current_user.age_group&.time_restrictions&.any? %>
+                <p><%= current_user.age_group.time_restrictions['start_hour'] %>:00 - <%= current_user.age_group.time_restrictions['end_hour'] %>:00</p>
+              <% else %>
+                <p>None</p>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>

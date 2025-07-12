@@ -1,0 +1,159 @@
+<div class="row">
+  <div class="col-12">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h1>
+        <i class="fas fa-users"></i> Participation Spaces
+        <% if @organization %>
+          - <%= @organization.name %>
+        <% end %>
+      </h1>
+      <% if current_user.organization_moderator? %>
+        <%= link_to new_organization_participation_space_path(@organization), class: 'btn btn-primary' do %>
+          <i class="fas fa-plus"></i> New Space
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<% if @participation_spaces.any? %>
+  <div class="row">
+    <% @participation_spaces.each do |space| %>
+      <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card h-100 <%= current_user.can_access_space?(space) ? 'border-success' : 'border-secondary' %>">
+          <div class="card-header">
+            <h5 class="card-title mb-0">
+              <%= space.name %>
+              <% if current_user.can_access_space?(space) %>
+                <span class="badge bg-success">Accessible</span>
+              <% else %>
+                <span class="badge bg-secondary">Restricted</span>
+              <% end %>
+            </h5>
+          </div>
+          <div class="card-body">
+            <p class="card-text"><%= space.description %></p>
+            
+            <div class="mb-3">
+              <strong>Age Group:</strong> <%= space.age_group.name %><br>
+              <strong>Status:</strong> 
+              <% if space.is_active? %>
+                <span class="badge bg-success">Active</span>
+              <% else %>
+                <span class="badge bg-warning">Inactive</span>
+              <% end %>
+            </div>
+
+            <div class="mb-3">
+              <strong>Content Filter:</strong> 
+              <span class="badge bg-info"><%= space.content_filter_level.titleize %></span>
+            </div>
+
+            <% if space.time_restrictions.any? %>
+              <div class="mb-3">
+                <strong>Time Restrictions:</strong><br>
+                <small class="text-muted">
+                  <%= space.time_restrictions['start_hour'] %>:00 - <%= space.time_restrictions['end_hour'] %>:00
+                </small>
+              </div>
+            <% end %>
+
+            <div class="mb-3">
+              <strong>Allowed Activities:</strong>
+              <div class="mt-1">
+                <% space.allowed_activities.first(3).each do |activity| %>
+                  <span class="badge bg-success me-1"><%= activity.titleize %></span>
+                <% end %>
+                <% if space.allowed_activities.length > 3 %>
+                  <span class="badge bg-secondary">+<%= space.allowed_activities.length - 3 %> more</span>
+                <% end %>
+              </div>
+            </div>
+
+            <% if space.restricted_activities.any? %>
+              <div class="mb-3">
+                <strong>Restricted Activities:</strong>
+                <div class="mt-1">
+                  <% space.restricted_activities.each do |activity| %>
+                    <span class="badge bg-danger me-1"><%= activity.titleize %></span>
+                  <% end %>
+                </div>
+              </div>
+            <% end %>
+          </div>
+          <div class="card-footer">
+            <div class="d-grid gap-2">
+              <%= link_to 'View Details', participation_space_path(space), class: 'btn btn-outline-primary btn-sm' %>
+              <% if current_user.organization_moderator? %>
+                <%= link_to 'Edit', edit_participation_space_path(space), class: 'btn btn-outline-secondary btn-sm' %>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+<% else %>
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body text-center">
+          <h4>No Participation Spaces Available</h4>
+          <p class="text-muted">
+            <% if current_user.organization_moderator? %>
+              Create your first participation space to get started.
+            <% else %>
+              No participation spaces have been created for this organization yet.
+            <% end %>
+          </p>
+          <% if current_user.organization_moderator? %>
+            <%= link_to 'Create First Space', new_organization_participation_space_path(@organization), class: 'btn btn-primary' %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<!-- Access Summary -->
+<div class="row mt-4">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">
+        <h5 class="card-title mb-0">
+          <i class="fas fa-shield-alt"></i> Your Access Summary
+        </h5>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-4">
+            <div class="text-center">
+              <h3 class="text-primary"><%= @participation_spaces.count %></h3>
+              <p class="text-muted">Total Spaces</p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="text-center">
+              <h3 class="text-success"><%= @participation_spaces.select { |s| current_user.can_access_space?(s) }.count %></h3>
+              <p class="text-muted">Accessible Spaces</p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="text-center">
+              <h3 class="text-warning"><%= @participation_spaces.select { |s| !current_user.can_access_space?(s) }.count %></h3>
+              <p class="text-muted">Restricted Spaces</p>
+            </div>
+          </div>
+        </div>
+        
+        <% if current_user.requires_parental_consent? %>
+          <div class="alert alert-warning mt-3">
+            <i class="fas fa-exclamation-triangle"></i>
+            <strong>Parental Consent Required:</strong> You need parental consent to access some participation spaces.
+            <%= link_to 'Update Consent', parental_consent_path, class: 'alert-link' %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

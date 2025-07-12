@@ -1,0 +1,185 @@
+<div class="row">
+  <div class="col-12">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h1>
+        <i class="fas fa-chart-bar"></i> Analytics - <%= @organization.name %>
+      </h1>
+      <div>
+        <%= link_to organization_path(@organization), class: 'btn btn-secondary' do %>
+          <i class="fas fa-arrow-left"></i> Back to Organization
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Analytics Summary -->
+<div class="row">
+  <div class="col-md-3 mb-4">
+    <div class="card text-center">
+      <div class="card-body">
+        <h3 class="text-primary"><%= @analytics.total_members %></h3>
+        <p class="text-muted">Total Members</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3 mb-4">
+    <div class="card text-center">
+      <div class="card-body">
+        <h3 class="text-success"><%= @analytics.active_members %></h3>
+        <p class="text-muted">Active Members</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3 mb-4">
+    <div class="card text-center">
+      <div class="card-body">
+        <h3 class="text-info"><%= @analytics.member_activity_rate %>%</h3>
+        <p class="text-muted">Activity Rate</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3 mb-4">
+    <div class="card text-center">
+      <div class="card-body">
+        <h3 class="text-warning"><%= @participation_spaces_data.count %></h3>
+        <p class="text-muted">Participation Spaces</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Age Distribution -->
+<div class="row">
+  <div class="col-md-6 mb-4">
+    <div class="card">
+      <div class="card-header">
+        <h5 class="card-title mb-0">
+          <i class="fas fa-chart-pie"></i> Age Distribution
+        </h5>
+      </div>
+      <div class="card-body">
+        <% if @age_distribution.any? %>
+          <% @age_distribution.each do |age_group, count| %>
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span><%= age_group %></span>
+              <div class="d-flex align-items-center">
+                <div class="progress me-2" style="width: 100px; height: 8px;">
+                  <div class="progress-bar" style="width: <%= (count.to_f / @analytics.total_members * 100).round(1) %>%"></div>
+                </div>
+                <span class="badge bg-primary"><%= count %></span>
+              </div>
+            </div>
+          <% end %>
+          <div class="mt-3">
+            <small class="text-muted">
+              <strong>Top Age Group:</strong> <%= @analytics.top_age_group %>
+            </small>
+          </div>
+        <% else %>
+          <p class="text-muted">No age distribution data available.</p>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Role Distribution -->
+  <div class="col-md-6 mb-4">
+    <div class="card">
+      <div class="card-header">
+        <h5 class="card-title mb-0">
+          <i class="fas fa-user-tag"></i> Role Distribution
+        </h5>
+      </div>
+      <div class="card-body">
+        <% if @role_distribution.any? %>
+          <% @role_distribution.each do |role, count| %>
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span><%= role.titleize %></span>
+              <div class="d-flex align-items-center">
+                <div class="progress me-2" style="width: 100px; height: 8px;">
+                  <div class="progress-bar bg-info" style="width: <%= (count.to_f / @analytics.total_members * 100).round(1) %>%"></div>
+                </div>
+                <span class="badge bg-info"><%= count %></span>
+              </div>
+            </div>
+          <% end %>
+          <div class="mt-3">
+            <small class="text-muted">
+              <strong>Dominant Role:</strong> <%= @analytics.dominant_role&.titleize %>
+            </small>
+          </div>
+        <% else %>
+          <p class="text-muted">No role distribution data available.</p>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Participation Spaces Analytics -->
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">
+        <h5 class="card-title mb-0">
+          <i class="fas fa-users"></i> Participation Spaces Analytics
+        </h5>
+      </div>
+      <div class="card-body">
+        <% if @participation_spaces_data.any? %>
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Space Name</th>
+                  <th>Age Group</th>
+                  <th>Accessible Users</th>
+                  <th>Content Filter</th>
+                  <th>Time Restrictions</th>
+                  <th>Allowed Activities</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @participation_spaces_data.each do |space_data| %>
+                  <tr>
+                    <td><%= space_data[:name] %></td>
+                    <td><%= space_data[:age_group] %></td>
+                    <td><%= space_data[:accessible_users] %> / <%= space_data[:total_accessible_users] %></td>
+                    <td><span class="badge bg-secondary"><%= space_data[:content_filter_level]&.titleize %></span></td>
+                    <td>
+                      <% if space_data[:time_restrictions]&.any? %>
+                        <%= space_data[:time_restrictions]['start_hour'] %>:00 - <%= space_data[:time_restrictions]['end_hour'] %>:00
+                      <% else %>
+                        None
+                      <% end %>
+                    </td>
+                    <td>
+                      <% space_data[:allowed_activities]&.first(3)&.each do |activity| %>
+                        <span class="badge bg-success"><%= activity %></span>
+                      <% end %>
+                      <% if space_data[:allowed_activities]&.length.to_i > 3 %>
+                        <span class="badge bg-secondary">+<%= space_data[:allowed_activities].length - 3 %> more</span>
+                      <% end %>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        <% else %>
+          <p class="text-muted">No participation spaces data available.</p>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Last Updated -->
+<div class="row">
+  <div class="col-12">
+    <div class="text-center text-muted">
+      <small>Last updated: <%= @analytics.last_updated.strftime('%B %d, %Y at %I:%M %p') %></small>
+    </div>
+  </div>
+</div>

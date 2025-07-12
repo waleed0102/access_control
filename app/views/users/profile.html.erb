@@ -1,0 +1,110 @@
+<div class="row">
+  <div class="col-lg-8 mx-auto">
+    <div class="card shadow-lg border-0">
+      <div class="card-header bg-primary text-white text-center py-4">
+        <h2 class="mb-0">
+          <i class="fas fa-user-circle"></i> User Profile
+        </h2>
+        <p class="mb-0 mt-2">Your account information</p>
+      </div>
+      
+      <div class="card-body p-4">
+        <div class="row">
+          <div class="col-md-4 text-center mb-4">
+            <div class="profile-avatar mb-3">
+              <i class="fas fa-user-circle fa-6x text-primary"></i>
+            </div>
+            <h4 class="mb-1"><%= @user.full_name %></h4>
+            <p class="text-muted mb-3"><%= @user.email %></p>
+          </div>
+          
+          <div class="col-md-8">
+            <div class="row">
+              <div class="col-sm-6 mb-3">
+                <label class="form-label text-muted small text-uppercase">First Name</label>
+                <p class="form-control-plaintext fw-bold"><%= @user.first_name %></p>
+              </div>
+              
+              <div class="col-sm-6 mb-3">
+                <label class="form-label text-muted small text-uppercase">Last Name</label>
+                <p class="form-control-plaintext fw-bold"><%= @user.last_name %></p>
+              </div>
+            </div>
+            
+            <div class="row">
+              <div class="col-sm-6 mb-3">
+                <label class="form-label text-muted small text-uppercase">Email Address</label>
+                <p class="form-control-plaintext fw-bold"><%= @user.email %></p>
+              </div>
+              
+              <div class="col-sm-6 mb-3">
+                <label class="form-label text-muted small text-uppercase">Phone Number</label>
+                <p class="form-control-plaintext fw-bold">
+                  <%= @user.phone.present? ? @user.phone : '<span class="text-muted">Not provided</span>'.html_safe %>
+                </p>
+              </div>
+            </div>
+            
+            <div class="row">
+              <div class="col-sm-6 mb-3">
+                <label class="form-label text-muted small text-uppercase">Date of Birth</label>
+                <p class="form-control-plaintext fw-bold">
+                  <%= @user.date_of_birth.present? ? @user.date_of_birth.strftime('%B %d, %Y') : '<span class="text-muted">Not provided</span>'.html_safe %>
+                </p>
+              </div>
+              
+              <div class="col-sm-6 mb-3">
+                <label class="form-label text-muted small text-uppercase">Age</label>
+                <p class="form-control-plaintext fw-bold">
+                  <%= @user.age.present? ? "#{@user.age} years old" : '<span class="text-muted">Not calculated</span>'.html_safe %>
+                </p>
+              </div>
+            </div>
+            
+            <div class="row">
+              <div class="col-sm-6 mb-3">
+                <label class="form-label text-muted small text-uppercase">Organization</label>
+                <p class="form-control-plaintext fw-bold">
+                  <% if @user.organization %>
+                    <%= link_to @user.organization.name, organization_path(@user.organization), class: 'text-decoration-none' %>
+                  <% else %>
+                    <span class="text-muted">No organization</span>
+                  <% end %>
+                </p>
+              </div>
+              
+              <div class="col-sm-6 mb-3">
+                <label class="form-label text-muted small text-uppercase">Role</label>
+                <p class="form-control-plaintext fw-bold">
+                  <% if @user.roles.any? %>
+                    <% @user.roles.each do |role| %>
+                      <span class="badge bg-primary me-1"><%= role.name.titleize %></span>
+                    <% end %>
+                  <% else %>
+                    <span class="text-muted">No roles assigned</span>
+                  <% end %>
+                </p>
+              </div>
+            </div>
+            
+            <div class="row">
+              <div class="col-sm-6 mb-3">
+                <label class="form-label text-muted small text-uppercase">Member Since</label>
+                <p class="form-control-plaintext fw-bold">
+                  <%= @user.created_at.strftime('%B %d, %Y') %>
+                </p>
+              </div>
+              
+              <div class="col-sm-6 mb-3">
+                <label class="form-label text-muted small text-uppercase">Last Updated</label>
+                <p class="form-control-plaintext fw-bold">
+                  <%= @user.updated_at.strftime('%B %d, %Y') %>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

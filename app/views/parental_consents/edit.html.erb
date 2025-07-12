@@ -1,0 +1,118 @@
+<div class="row">
+  <div class="col-12">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h1>
+        <i class="fas fa-user-shield"></i> Update Parental Consent
+      </h1>
+      <%= link_to parental_consent_path, class: 'btn btn-secondary' do %>
+        <i class="fas fa-arrow-left"></i> Back
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-8">
+    <div class="card">
+      <div class="card-header">
+        <h5 class="card-title mb-0">
+          <i class="fas fa-edit"></i> Consent Information
+        </h5>
+      </div>
+      <div class="card-body">
+        <%= form_with model: @parental_consent, local: true do |form| %>
+          <% if @parental_consent.errors.any? %>
+            <div class="alert alert-danger">
+              <h6>Please correct the following errors:</h6>
+              <ul>
+                <% @parental_consent.errors.full_messages.each do |message| %>
+                  <li><%= message %></li>
+                <% end %>
+              </ul>
+            </div>
+          <% end %>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <%= form.label :parent_name, 'Parent/Guardian Name', class: 'form-label' %>
+                <%= form.text_field :parent_name, class: 'form-control', placeholder: 'Enter parent or guardian name' %>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <%= form.label :parent_email, 'Parent/Guardian Email', class: 'form-label' %>
+                <%= form.email_field :parent_email, class: 'form-control', placeholder: 'Enter parent or guardian email' %>
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <div class="form-check">
+              <%= form.check_box :terms_accepted, class: 'form-check-input' %>
+              <%= form.label :terms_accepted, 'I accept the terms and conditions for parental consent', class: 'form-check-label' %>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <div class="form-check">
+              <%= form.check_box :consent_given, class: 'form-check-input' %>
+              <%= form.label :consent_given, 'I give consent for my child to participate in age-appropriate activities', class: 'form-check-label' %>
+            </div>
+          </div>
+
+          <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+            <%= link_to 'Cancel', parental_consent_path, class: 'btn btn-secondary me-md-2' %>
+            <%= form.submit 'Update Consent', class: 'btn btn-primary' %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="card">
+      <div class="card-header">
+        <h5 class="card-title mb-0">
+          <i class="fas fa-info-circle"></i> Important Information
+        </h5>
+      </div>
+      <div class="card-body">
+        <div class="alert alert-info">
+          <h6><i class="fas fa-exclamation-triangle"></i> Parental Consent Required</h6>
+          <p class="mb-0">As a user under 18, you need parental consent to access all features of this platform.</p>
+        </div>
+
+        <h6>What this means:</h6>
+        <ul class="list-unstyled">
+          <li><i class="fas fa-check text-success"></i> Access to age-appropriate content</li>
+          <li><i class="fas fa-check text-success"></i> Participation in educational activities</li>
+          <li><i class="fas fa-check text-success"></i> Safe social interaction</li>
+          <li><i class="fas fa-shield-alt text-warning"></i> Content filtering based on age</li>
+          <li><i class="fas fa-clock text-info"></i> Time restrictions for safety</li>
+        </ul>
+
+        <h6>Your Age Group: <%= current_user.age_group&.name || 'Not assigned' %></h6>
+        <% if current_user.age_group %>
+          <p><strong>Content Filter:</strong> <%= current_user.age_group.content_filter_level.titleize %></p>
+          <% if current_user.age_group.time_restrictions.any? %>
+            <p><strong>Time Restrictions:</strong> <%= current_user.age_group.time_restrictions['start_hour'] %>:00 - <%= current_user.age_group.time_restrictions['end_hour'] %>:00</p>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="card mt-3">
+      <div class="card-header">
+        <h5 class="card-title mb-0">
+          <i class="fas fa-user"></i> User Details
+        </h5>
+      </div>
+      <div class="card-body">
+        <p><strong>Name:</strong> <%= current_user.full_name %></p>
+        <p><strong>Age:</strong> <%= current_user.age %> years old</p>
+        <p><strong>Organization:</strong> <%= current_user.organization&.name || 'None' %></p>
+      </div>
+    </div>
+  </div>
+</div>

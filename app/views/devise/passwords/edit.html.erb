@@ -1,0 +1,82 @@
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-md-6 col-lg-4">
+      <div class="card shadow-lg border-0 mt-5 auth-form-card">
+        <div class="card-header bg-info text-white text-center py-4">
+          <h2 class="mb-0">
+            <i class="fas fa-lock"></i> Set New Password
+          </h2>
+          <p class="mb-0 mt-2">Create your new password</p>
+        </div>
+        
+        <div class="card-body p-4">
+          <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put, class: 'needs-validation', novalidate: true }) do |f| %>
+            <%= render "devise/shared/error_messages", resource: resource %>
+            <%= f.hidden_field :reset_password_token %>
+
+            <div class="mb-3">
+              <%= f.label :password, "New password", class: 'form-label' do %>
+                <i class="fas fa-lock"></i> New Password
+              <% end %>
+              <%= f.password_field :password, autofocus: true, autocomplete: "new-password", 
+                  class: 'form-control form-control-lg', 
+                  placeholder: 'Enter your new password',
+                  required: true %>
+              <div class="invalid-feedback">
+                Please enter a new password.
+              </div>
+              <% if @minimum_password_length %>
+                <div class="form-text">
+                  <i class="fas fa-info-circle"></i> Minimum <%= @minimum_password_length %> characters
+                </div>
+              <% end %>
+            </div>
+
+            <div class="mb-4">
+              <%= f.label :password_confirmation, "Confirm new password", class: 'form-label' do %>
+                <i class="fas fa-lock"></i> Confirm New Password
+              <% end %>
+              <%= f.password_field :password_confirmation, autocomplete: "new-password", 
+                  class: 'form-control form-control-lg', 
+                  placeholder: 'Confirm your new password',
+                  required: true %>
+              <div class="invalid-feedback">
+                Please confirm your new password.
+              </div>
+            </div>
+
+            <div class="d-grid gap-2">
+              <%= f.submit "Change my password", class: 'btn btn-info btn-lg' %>
+            </div>
+          <% end %>
+
+          <hr class="my-4">
+
+          <div class="text-center">
+            <span class="text-muted">Remember your password?</span>
+            <%= link_to "Sign in", new_session_path(resource_name), class: 'text-decoration-none ms-1' %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Form validation
+(function() {
+  'use strict';
+  window.addEventListener('load', function() {
+    var forms = document.getElementsByClassName('needs-validation');
+    var validation = Array.prototype.filter.call(forms, function(form) {
+      form.addEventListener('submit', function(event) {
+        if (form.checkValidity() === false) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+        form.classList.add('was-validated');
+      }, false);
+    });
+  }, false);
+})();
+</script>
